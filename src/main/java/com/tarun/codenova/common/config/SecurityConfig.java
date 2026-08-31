@@ -78,7 +78,8 @@ public class SecurityConfig {
                 List.of(
                         "http://localhost:3000",
                         "http://localhost:5173",
-                        "https://codenova-frontend.vercel.app"
+                        "https://codenova-frontend.vercel.app",
+                        "https://codenova-frontend-9ggdoio94-tarun9993s-projects.vercel.app"
                 )
         );
 
