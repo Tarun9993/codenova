@@ -74,12 +74,11 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
+        configuration.setAllowedOriginPatterns(
                 List.of(
                         "http://localhost:3000",
                         "http://localhost:5173",
-                        "https://codenova-frontend.vercel.app",
-                        "https://codenova-frontend-9ggdoio94-tarun9993s-projects.vercel.app"
+                        "https://*.vercel.app"
                 )
         );
 
