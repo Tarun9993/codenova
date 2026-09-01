@@ -76,7 +76,8 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "https://*.vercel.app"
+                "https://codenova-frontend.vercel.app"
+//                "https://*.vercel.app"
         ));
 
         // Allowed HTTP methods
