@@ -1,123 +1,4 @@
 package com.tarun.codenova.common.config;
-//
-//import com.tarun.codenova.auth.jwt.JwtAuthenticationFilter;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-//import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//import org.springframework.web.cors.CorsConfiguration;
-//import org.springframework.web.cors.CorsConfigurationSource;
-//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-//
-//import java.util.List;
-//
-//@Configuration
-//@EnableWebSecurity
-//@RequiredArgsConstructor
-//@EnableMethodSecurity
-//public class SecurityConfig {
-//
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .sessionManagement(session ->
-//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
-//                .authorizeHttpRequests(auth -> auth
-//                        // 1. Explicitly allow all preflight OPTIONS requests
-//                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//
-//                        // 2. Public auth endpoints
-//                        .requestMatchers("/api/users/register", "/api/auth/login").permitAll()
-//
-//                        // 3. Swagger / OpenAPI endpoints
-//                        .requestMatchers(
-//                                "/v3/api-docs/**",
-//                                "/swagger-ui/**",
-//                                "/swagger-ui.html"
-//                        ).permitAll()
-//
-//                        // 4. Secured endpoints
-//                        .anyRequest().authenticated()
-//                )
-//                .addFilterBefore(
-//                        jwtAuthenticationFilter,
-//                        UsernamePasswordAuthenticationFilter.class
-//                );
-//
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//
-//        // Allow localhost and any Vercel preview/production deployment
-//        configuration.setAllowedOriginPatterns(List.of(
-//                "http://localhost:3000",
-//                "http://localhost:5173",
-//                "https://codenova-frontend.vercel.app"
-////                "https://*.vercel.app"
-//        ));
-//
-//        // Allowed HTTP methods
-//        configuration.setAllowedMethods(List.of(
-//                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
-//        ));
-//
-//        // Allowed request headers
-//        configuration.setAllowedHeaders(List.of(
-//                "Authorization",
-//                "Content-Type",
-//                "X-Requested-With",
-//                "Accept",
-//                "Origin",
-//                "Access-Control-Request-Method",
-//                "Access-Control-Request-Headers"
-//        ));
-//
-//        // Headers exposed to the frontend
-//        configuration.setExposedHeaders(List.of(
-//                "Authorization",
-//                "Access-Control-Allow-Origin",
-//                "Access-Control-Allow-Credentials"
-//        ));
-//
-//        configuration.setAllowCredentials(true);
-//        configuration.setMaxAge(3600L); // Cache preflight response for 1 hour
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//
-//        return source;
-//    }
-//
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
-//}
 
 import com.tarun.codenova.auth.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -125,76 +6,157 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    // =========================================================
+    // CORS
+    // =========================================================
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOriginPatterns(
+                List.of(
+                        "http://localhost:3000",
+                        "http://localhost:5173",
+                        "https://*.vercel.app"
+                )
+        );
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH",
+                        "OPTIONS"
+                )
+        );
+
+        configuration.setAllowedHeaders(
+                List.of("*")
+        );
+
+        configuration.setAllowCredentials(true);
+
+        configuration.setExposedHeaders(
+                List.of("Authorization")
+        );
+
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
+
+        return source;
+    }
+
+    // =========================================================
+    // SECURITY
+    // =========================================================
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
+
         http
-                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .cors(cors ->
+                        cors.configurationSource(
+                                corsConfigurationSource()
+                        )
+                )
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+
+                        // Allow CORS preflight requests
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**"
+                        ).permitAll()
+
+                        // Public endpoints
+                        .requestMatchers(
+                                "/api/users/register"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/api/auth/login"
+                        ).permitAll()
+
+                        // Swagger
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
 
-    // Exposes the AuthenticationManager required by AuthService
+    // =========================================================
+    // AUTHENTICATION MANAGER
+    // =========================================================
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+
+        return authenticationConfiguration
+                .getAuthenticationManager();
     }
 
-    // PasswordEncoder bean for verifying/hashing user passwords
+    // =========================================================
+    // PASSWORD ENCODER
+    // =========================================================
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of(
-                "https://codenova-frontend.vercel.app",
-                "https://*-vercel.app",
-                "http://localhost:5173",
-                "http://localhost:3000"
-        ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
     }
 }
